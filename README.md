@@ -1,5 +1,6 @@
 # ADD by Shi wenqi
-# Branch from Shi wenqi
+# 18.3.9 try to add tensorboard
+# analyze every feature layer's output --> early exit
 
 # SSD: Single Shot MultiBox Detector in TensorFlow
 
