@@ -100,9 +100,16 @@ tf.app.flags.DEFINE_float(
 tf.app.flags.DEFINE_boolean(
     'wait_for_checkpoints', False, 'Wait for new checkpoints in the eval loop.')
 
-
 FLAGS = tf.app.flags.FLAGS
 
+def flatten(x):  
+    result = []  
+    for el in x:  
+         if isinstance(el, tuple):  
+               result.extend(flatten(el))  
+         else:  
+               result.append(el)  
+    return result
 
 def main(_):
     if not FLAGS.dataset_dir:
@@ -278,6 +285,8 @@ def main(_):
             op = tf.summary.scalar(summary_name, mAP, collections=[])
             op = tf.Print(op, [mAP], summary_name)
             tf.add_to_collection(tf.GraphKeys.SUMMARIES, op)
+            
+            summary_op = tf.summary.merge(list(tf.get_collection(tf.GraphKeys.SUMMARIES)))
 
         # for i, v in enumerate(l_precisions):
         #     summary_name = 'eval/precision_at_recall_%.2f' % LIST_RECALLS[i]
@@ -315,7 +324,9 @@ def main(_):
                 checkpoint_path=checkpoint_path,
                 logdir=FLAGS.eval_dir,
                 num_evals=num_batches,
-                eval_op=list(names_to_updates.values()),
+                #eval_op=list(names_to_updates.values()),
+                eval_op=flatten(list(names_to_updates.values())), 
+                summary_op=summary_op,
                 variables_to_restore=variables_to_restore,
                 session_config=config)
             # Log time spent.
@@ -334,7 +345,9 @@ def main(_):
                 checkpoint_dir=checkpoint_path,
                 logdir=FLAGS.eval_dir,
                 num_evals=num_batches,
-                eval_op=list(names_to_updates.values()),
+                #eval_op=list(names_to_updates.values()),
+                eval_op=flatten(list(names_to_updates.values())),
+                summary_op=summary_op,
                 variables_to_restore=variables_to_restore,
                 eval_interval_secs=60,
                 max_number_of_evaluations=np.inf,
