@@ -1,5 +1,4 @@
 # ADD by Shi wenqi
-# Branch from Shi wenqi
 
 # SSD: Single Shot MultiBox Detector in TensorFlow
 
